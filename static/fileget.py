@@ -1,9 +1,11 @@
 from fastapi.responses import RedirectResponse, FileResponse
 from config.connect import app
 import os
-@app.get('/api/v1/attachs/{filename}', tags=['ຮູບພະນັກງານ'])
+@app.get('/api/v1/images/{filename}', tags=['ຮູບພະນັກງານ'])
 async def display(filename: str):
-    file_path = os.path.join(f"/home/took/myproject/config/static/images/{filename}")
+    op = os.path.abspath
+    print (op)
+    file_path = os.path.join(f"static\\images\\{filename}")
     if (filename.endswith('.png')):
         return FileResponse(file_path, media_type="image/png", filename=filename)
     elif (filename.endswith('.jpg')) or (filename.endswith('.jpeg')):
@@ -15,7 +17,7 @@ async def display(filename: str):
 
 @app.get('/api/v1/attachs/{filename}', tags=['ເອກະສານຕ່າງໆ'])
 async def display2(filename: str):
-    file_path = os.path.join(f"/home/took/myproject/config/static/attachments/{filename}")
+    file_path = os.path.join(f"static\\attachments\\{filename}")
     if (filename.endswith('.pdf')):
         return FileResponse(file_path, media_type="application/pdf", filename=filename)
     elif (filename.endswith('.docx')):

@@ -4,18 +4,25 @@ from fastapi import Form, Request, UploadFile, File
 
 class taskmanagement(BaseModel):
     taskId: str
-    projectId: str
-    sectionName: str
+    sectionId: str
     taskName: str
     progress: str
     fromDate: str
     toDate: str
     createdBy: str
     updateBy: str
-
+class section(BaseModel):
+    sectionId: str
+    projectId: str
+    sectionName: str
+    progress: str
+    fromDate: str
+    toDate: str
+    createdBy: str
+    updateBy: str
 class workreport(BaseModel):
     workId: str
-    TaskManageement_Id: str
+    Task_Id: str
     empId: str
     dateBegin: str
     dateEnd: str
@@ -52,3 +59,8 @@ class projectmaster(BaseModel):
     progress: str
     createdBy: str 
     updateBy: str 
+
+class LoginStart(BaseModel):
+    empId: str
+    password: str
+
