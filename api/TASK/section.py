@@ -1,15 +1,14 @@
 from fastapi import Depends, Form
 from fastapi.responses import JSONResponse
-from auth.auth import AuthHandler
-from config.connect import app, cursor, conp
+from config.connect import app, cursor, conp, auth_handler
 from model.model import section
 
 
 @app.get('/api/v1/task', tags=['ໜ້າວຽກ'])
-async def getTask(empID=Depends(AuthHandler.auth_wrapper)):
+async def getTask(empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(
-            f"SELECT sectionId, projectId, sectionName, progress, DATE_FORMAT(fromDate, '%Y-%m-%d') as fromDate, date_format(toDate, '%Y-%m-%d') FROM Section")
+            f"SELECT sectionId, projectId, sectionName, progress, DATE_FORMAT(fromDate, '%%Y-%%m-%%d') as fromDate, date_format(toDate, '%%Y-%%m-%%d') FROM Section")
         taskRows = cursor.fetchall()
         return JSONResponse(
             status_code=200,
@@ -24,7 +23,7 @@ async def getTask(empID=Depends(AuthHandler.auth_wrapper)):
 
 
 @app.post('/api/v1/task', tags=['ໜ້າວຽກ'])
-async def insertTask(task: section,empID=Depends(AuthHandler.auth_wrapper)
+async def insertTask(task: section,empID=Depends(auth_handler.auth_wrapper)
                      ):
     try:
         cursor.execute("INSERT INTO Section VALUES(sectionId, projectId, sectionName, progress, fromDate, toDate, createdBy, updateBy) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
@@ -42,7 +41,7 @@ async def insertTask(task: section,empID=Depends(AuthHandler.auth_wrapper)
 
 
 @app.put('/api/v1/task', tags=['ໜ້າວຽກ'])
-async def updateTask(taskmg: section,empID=Depends(AuthHandler.auth_wrapper)
+async def updateTask(taskmg: section,empID=Depends(auth_handler.auth_wrapper)
                      ):
     try:
         cursor.execute("UPDATE Section SET sectionName = %s, updateBy = %s, progress = %s, \
@@ -61,7 +60,7 @@ async def updateTask(taskmg: section,empID=Depends(AuthHandler.auth_wrapper)
 
 
 @app.delete('/api/v1/task', tags=['ໜ້າວຽກ'])
-async def deleteTask(sectionId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def deleteTask(sectionId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(
             "DELETE FROM Section WHERE sectionId = %s", (sectionId))
@@ -78,10 +77,10 @@ async def deleteTask(sectionId: str, empID=Depends(AuthHandler.auth_wrapper)):
 
 
 @app.get('/api/v1/task/{sectionId}', tags=['ໜ້າວຽກ'])
-async def getTaskById(sectionId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def getTaskById(sectionId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(
-            f"SELECT sectionId, projectId, sectionName, progress, DATE_FORMAT(fromDate, '%Y-%m-%d') as fromDate, date_format(toDate, '%Y-%m-%d') FROM Section WHERE sectionId = %s", (sectionId))
+            f"SELECT sectionId, projectId, sectionName, progress, DATE_FORMAT(fromDate, '%%Y-%%m-%%d') as fromDate, date_format(toDate, '%%Y-%%m-%%d') FROM Section WHERE sectionId = %s", (sectionId))
         taskRows = cursor.fetchone()
         return JSONResponse(
             status_code=200,

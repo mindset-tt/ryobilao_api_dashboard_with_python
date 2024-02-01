@@ -1,12 +1,11 @@
 from fastapi import Depends, Form
 from fastapi.responses import JSONResponse
-from auth.auth import AuthHandler
-from config.connect import app, cursor, conp
+from config.connect import app, cursor, conp, auth_handler
 from model.model import position
 
 
 @app.get('/api/v1/position', tags=['ຕຳແໜ່ງ'])
-async def getPosition(empID=Depends(AuthHandler.auth_wrapper)):
+async def getPosition(empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute("SELECT positionId, positionName FROM Position")
         posRows = cursor.fetchall()
@@ -23,7 +22,7 @@ async def getPosition(empID=Depends(AuthHandler.auth_wrapper)):
 
 
 @app.post('/api/v1/position', tags=['ຕຳແໜ່ງ'])
-async def insertPosition(pos: position,empID=Depends(AuthHandler.auth_wrapper)):
+async def insertPosition(pos: position,empID=Depends(auth_handler.auth_wrapper)):
     try:
 
         cursor.execute("INSERT INTO Position (positionId, positionName, createdBy, updatedBy) VALUES (%s, %s, %s, %s)",
@@ -43,7 +42,7 @@ async def insertPosition(pos: position,empID=Depends(AuthHandler.auth_wrapper)):
 
 
 @app.put('/api/v1/position', tags=['ຕຳແໜ່ງ'])
-async def updatePosition(pos: position, empID=Depends(AuthHandler.auth_wrapper)):
+async def updatePosition(pos: position, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute("UPDATE Position SET positionName = %s, updateBy = %s, updateAt = NOW() WHERE positionId = %s",
                        (pos.positionName, pos.updateBy, pos.positionId))
@@ -61,7 +60,7 @@ async def updatePosition(pos: position, empID=Depends(AuthHandler.auth_wrapper))
 
 
 @app.delete('/api/v1/position', tags=['ຕຳແໜ່ງ'])
-async def deletePosition(positionId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def deletePosition(positionId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(
             "DELETE FROM Position WHERE positionId = %s", (positionId))
@@ -78,7 +77,7 @@ async def deletePosition(positionId: str, empID=Depends(AuthHandler.auth_wrapper
 
 
 @app.get('/api/v1/position/{positionId}', tags=['ຕຳແໜ່ງ'])
-async def getPositionById(positionId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def getPositionById(positionId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(
             "SELECT positionId, positionName FROM Position WHERE positionId = %s", (positionId))

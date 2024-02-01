@@ -2,8 +2,7 @@ from re import match
 from fastapi import Depends, Form, Request, UploadFile
 from fastapi.responses import JSONResponse
 from werkzeug.security import generate_password_hash
-from auth.auth import AuthHandler
-from config.connect import app, cursor, conp
+from config.connect import app, cursor, conp, auth_handler
 import uuid
 import os
 ALLOWED_EXTENSIONS_IMAGE = {'png', 'jpg', 'jpeg'}
@@ -16,11 +15,11 @@ def allowed_file_attach(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_ATTACH
 
 @app.get('/api/v1/employee', tags=['ພະນັກງານ'])
-async def getEmployee(empID=Depends(AuthHandler.auth_wrapper)):
+async def getEmployee(empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(f"SELECT empId, empnickName, empGivenName, empFamilyName, gender, password, address, img, empTel,\
-                        email, date_format(dateOfBirth, '%Y-%m-%d') as DateOfBirth, attacthMent, depId, positionId, empStatus, date_format(joinDate, '%Y-%m-%d') as joinDate,\
-                        trainingPeriod, date_format(finishedTraining, '%Y-%m-%d') as finishedTraining, seatStatus, date_format(retireDate, '%Y-%m-%d') as retireDate, remark FROM Employee")
+                        email, date_format(dateOfBirth, '%%Y-%%m-%%d') as DateOfBirth, attacthMent, depId, positionId, empStatus, date_format(joinDate, '%%Y-%%m-%%d') as joinDate,\
+                        trainingPeriod, date_format(finishedTraining, '%%Y-%%m-%%d') as finishedTraining, seatStatus, date_format(retireDate, '%%Y-%%m-%%d') as retireDate, remark FROM Employee")
         empRows = cursor.fetchall()
         return empRows
 
@@ -60,7 +59,7 @@ async def insertEmployee(request: Request,
                          updateBy: str = Form(...),
                          retireDate: str = Form(...),
                          remark: str = Form(...),
-                         empID=Depends(AuthHandler.auth_wrapper)
+                         empID=Depends(auth_handler.auth_wrapper)
                          ):
     try:
         form_data = await request.form()
@@ -135,7 +134,7 @@ async def updateEmployee(request: Request,
                          updateBy: str = Form(...),
                          retireDate: str = Form(...),
                          remark: str = Form(...),
-                         empID=Depends(AuthHandler.auth_wrapper)
+                         empID=Depends(auth_handler.auth_wrapper)
                          ):
     try:
         form_data = await request.form()
@@ -184,7 +183,7 @@ async def updateEmployee(request: Request,
 
 
 @app.delete('/api/v1/employee', tags=['ພະນັກງານ'])
-async def deleteEmployee(empId: str = Form(...), empID=Depends(AuthHandler.auth_wrapper)):
+async def deleteEmployee(empId: str = Form(...), empID=Depends(auth_handler.auth_wrapper)):
     try:
         sqlQuery = f'update Employee set empStatus = "Retire" where empId = "{empId}"'
         cursor.execute(sqlQuery)
@@ -195,11 +194,11 @@ async def deleteEmployee(empId: str = Form(...), empID=Depends(AuthHandler.auth_
 
 
 @app.get('/api/v1/employee/{empId}', tags=['ພະນັກງານ'])
-async def getEmployeeById(empId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def getEmployeeById(empId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
-        sqlQuery = f"SELECT empId, empnickName, empGivenName, empFamilyName, gender, password, address, img, empTel, email, date_format(dateOfBirth, '%Y-%m-%d') as DateOfBirth,\
-              attacthMent, depId, positionId, empStatus, date_format(joinDate, '%Y-%m-%d') as joinDate, trainingPeriod, date_format(finishedTraining, '%Y-%m-%d') as finishedTraining,\
-                  seatStatus, date_format(retireDate, '%Y-%m-%d') as retireDate, remark FROM Employee WHERE empId = '{empId}'"
+        sqlQuery = f"SELECT empId, empnickName, empGivenName, empFamilyName, gender, password, address, img, empTel, email, date_format(dateOfBirth, '%%Y-%%m-%%d') as DateOfBirth,\
+              attacthMent, depId, positionId, empStatus, date_format(joinDate, '%%Y-%%m-%%d') as joinDate, trainingPeriod, date_format(finishedTraining, '%%Y-%%m-%%d') as finishedTraining,\
+                  seatStatus, date_format(retireDate, '%%Y-%%m-%%d') as retireDate, remark FROM Employee WHERE empId = '{empId}'"
         cursor.execute(sqlQuery)
         empRows = cursor.fetchone()
         return empRows

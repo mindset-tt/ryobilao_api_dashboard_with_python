@@ -1,12 +1,11 @@
 from fastapi import Depends, Form
 from fastapi.responses import JSONResponse
-from auth.auth import AuthHandler
-from config.connect import app, cursor, conp
+from config.connect import app, cursor, conp, auth_handler
 from model.model import department
 
 
 @app.get('/api/v1/department', tags=['ພາກສ່ວນ'])
-async def getDepartment(empID=Depends(AuthHandler.auth_wrapper)):
+async def getDepartment(empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute("SELECT depId, depName FROM Department")
         depRows = cursor.fetchall()
@@ -24,7 +23,7 @@ async def getDepartment(empID=Depends(AuthHandler.auth_wrapper)):
 
 
 @app.post('/api/v1/department', tags=['ພາກສ່ວນ'])
-async def insertDepartment(dep: department, empID=Depends(AuthHandler.auth_wrapper)):
+async def insertDepartment(dep: department, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute("INSERT INTO Department VALUES(depId, depName, createdBy, updateBy) VALUES (%s, %s, %s, %s)",
                        (dep.depId, dep.depName, dep.createdBy, dep.updateBy))
@@ -41,7 +40,7 @@ async def insertDepartment(dep: department, empID=Depends(AuthHandler.auth_wrapp
 
 
 @app.put('/api/v1/department', tags=['ພາກສ່ວນ'])
-async def updateDepartment(dep: department, empID=Depends(AuthHandler.auth_wrapper)):
+async def updateDepartment(dep: department, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute("UPDATE Department SET depName = %s, updateBy = %s, updateAt = NOW() WHERE depId = %s",
                        (dep.depName, dep.updateBy, dep.depId))
@@ -59,7 +58,7 @@ async def updateDepartment(dep: department, empID=Depends(AuthHandler.auth_wrapp
 
 
 @app.delete('/api/v1/department', tags=['ພາກສ່ວນ'])
-async def deleteDepartment(depId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def deleteDepartment(depId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute("DELETE FROM Department WHERE depId = %s", (depId))
         conp.commit()
@@ -76,7 +75,7 @@ async def deleteDepartment(depId: str, empID=Depends(AuthHandler.auth_wrapper)):
 
 
 @app.get('/api/v1/department/{depId}', tags=['ພາກສ່ວນ'])
-async def getDepartmentById(depId: str, empID=Depends(AuthHandler.auth_wrapper)):
+async def getDepartmentById(depId: str, empID=Depends(auth_handler.auth_wrapper)):
     try:
         cursor.execute(
             "SELECT depId, depName FROM Department WHERE depId = %s", (depId))
