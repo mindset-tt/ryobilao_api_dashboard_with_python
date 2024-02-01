@@ -16,7 +16,7 @@ def allowed_file_attach(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS_ATTACH
 
 @app.get('/api/v1/employee', tags=['ພະນັກງານ'])
-async def getEmployee():
+async def getEmployee(empID=Depends(AuthHandler.auth_wrapper)):
     try:
         cursor.execute(f"SELECT empId, empnickName, empGivenName, empFamilyName, gender, password, address, img, empTel,\
                         email, date_format(dateOfBirth, '%Y-%m-%d') as DateOfBirth, attacthMent, depId, positionId, empStatus, date_format(joinDate, '%Y-%m-%d') as joinDate,\

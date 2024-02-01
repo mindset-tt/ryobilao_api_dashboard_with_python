@@ -23,7 +23,7 @@ async def Login(info: LoginStart):
                     content={'message': 'username ບໍ່ຖືກຕ້ອງ'}
                 )
             if check_password_hash(password, info.password) == True:
-                token = jwt.encode({'emp_ID': info.empId, 'exp': datetime.now(timezone.utc) + timedelta(days=0, hours=12), 'iat': datetime.now(timezone.utc)}, SECRET_KEY, algorithm='HS256')
+                token = jwt.encode({'emp_ID': info.empId, 'exp': datetime.now(timezone.utc) + timedelta(days=0, hours=12), 'iat': datetime.now(timezone.utc)}, SECRET_KEY, algorithm='HS256') # type: ignore
                 cursor.execute(
                     "SELECT * FROM Employee where empId=%s and empStatus=1", (info.empId))
                 userRows = cursor.fetchone()
